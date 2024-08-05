@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-PenaltyApplication<penalty>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.inspection.penalty.PenaltyApplication",
+            "projectName": "penalty",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
