@@ -11,6 +11,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import com.inspection.penalty.model.usersmodel;
+import com.inspection.penalty.model.admin.Permissionmodel;
+import com.inspection.penalty.model.admin.Userlistmodel;
 
 @Repository
 public class Userauthrepo {
@@ -39,6 +41,30 @@ public class userdata implements RowMapper<usersmodel>{
 }
 
 
+public class permisiondata implements RowMapper<Permissionmodel> {
+
+    @Override
+    @Nullable
+    public Permissionmodel mapRow(ResultSet rs, int rowNum) throws SQLException {
+        // TODO Auto-generated method stub
+
+        Permissionmodel permisiont=new Permissionmodel();
+        permisiont.setId(rs.getString(1));
+        permisiont.setName(rs.getString(2));
+        permisiont.setTo(rs.getString(3));
+        return permisiont;
+    }
+
+    
+}
+
+
+// public class  updateact implements RowMapper<Userlistmodel> {
+
+    
+// }
+
+
 
 public List<usersmodel> Login(usersmodel usersmodels){
     String username=usersmodels.getUserid();
@@ -49,11 +75,21 @@ public List<usersmodel> Login(usersmodel usersmodels){
    // System.out.println(query);
     return jdbcTemplate.query(query, new userdata());
 }
-public int Register(String user_id,String password){
-    String query="Insert into user_master (user_id,`password`) values('"+user_id+"','"+password+"')";
-    
-     return jdbcTemplate.update(query);
+public int Register(String firstname,String lastname,String rollid,String isactive,String user_id,String password,String josn){
+    String query="Insert into user_master (`name`,last_name,roll_id,is_active,user_id,`password`,application_access) values('"+firstname+"','"+lastname+"','"+rollid+"','"+isactive+"','"+user_id+"','"+password+"','"+josn+"')";
+        
+    return jdbcTemplate.update(query);
  }
+
+ public List<Permissionmodel> permission(){
+    String queryString="SELECT * FROM `navigation` WHERE is_active ='1'";
+
+
+    return jdbcTemplate.query(queryString, new permisiondata());
+ }
+
+
+
 
 
 }

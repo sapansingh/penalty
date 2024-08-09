@@ -15,10 +15,10 @@ public class analtyc {
 
 
 
-    public List<assignment> getassignment(){
+    public List<assignment> getassignment(String startDate,String endDate){
 
         
-        return analytics.Assignment();
+        return analytics.Assignment(startDate,endDate);
     }
     
 }

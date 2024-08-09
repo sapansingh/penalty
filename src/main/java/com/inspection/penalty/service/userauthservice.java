@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.inspection.penalty.model.usersmodel;
+import com.inspection.penalty.model.admin.Permissionmodel;
 import com.inspection.penalty.repository.Userauthrepo;
 
 @Service
@@ -18,18 +19,24 @@ public class userauthservice {
     private Userauthrepo userrepo;
 
 
-    public int  registerUser(String username, String password) {
+    public int  registerUser(String firstname,String lastname,String rollid,String isactive,String username, String password,String josn) {
         // Encrypt the password
     
         // Save the user with the encrypted password
         // userRepository.save(new User(username, encryptedPassword));
-       return userrepo.Register(password, password);
+       return userrepo.Register(firstname,lastname,rollid,isactive,username, password,josn);
 
     }
 
     public List<usersmodel>  Login(usersmodel usermodels) {
         // Verify the password
         return userrepo.Login(usermodels);
+    }
+
+    public List<Permissionmodel> getpermisioin(){
+
+        return userrepo.permission();
+
     }
 
 }

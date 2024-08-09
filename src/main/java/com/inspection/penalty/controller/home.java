@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.security.Permission;
 import java.time.Duration;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inspection.penalty.model.usersmodel;
+import com.inspection.penalty.model.admin.Permissionmodel;
 import com.inspection.penalty.model.analytics.assignment;
 import com.inspection.penalty.model.assets.Assetsmodel;
 
@@ -35,7 +37,7 @@ import com.inspection.penalty.service.assetsservice;
 import com.inspection.penalty.service.paraservice;
 import com.inspection.penalty.service.userauthservice;
 import com.inspection.penalty.service.analytic.analtyc;
-
+import com.inspection.penalty.service.export.Assignmentexport;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -64,6 +66,7 @@ public class home {
     
     @Autowired
     private analtyc analtyc;
+   
 
 
         @Autowired
@@ -79,11 +82,14 @@ public class home {
     }
 
     @GetMapping("/assignment")
-    public List<assignment> assignment() {
-        return analtyc.getassignment();
+    public List<assignment> assignment(@RequestParam String start,@RequestParam String end) {
+        return analtyc.getassignment(start,end);
+    }
+    @GetMapping("/getpermision")
+    public List<Permissionmodel> permision() {
+        return authservice.getpermisioin();
     }
     
-
 
     @PostMapping("/addassets")
 public int Addassets(@RequestBody Assetsmodel formdata) {
@@ -102,17 +108,14 @@ public List<Assetsmodel> getassets() {
     @ResponseBody
     public List<parameter> parameter() {
         List<parameter> param=para.penaltycal();
-
         return param;
-        
-      
     }
+    @CrossOrigin("*")
+    @PostMapping("/registerUser")
+    public int Register(@RequestParam String firstname,@RequestParam String lastname,@RequestParam String rollid,@RequestParam String isactive,@RequestParam(required = false) String user_id,@RequestParam(required = false) String password,@RequestParam(required = false) String josn) {
 
-    @GetMapping("/registerUser")
-    public int getMethodName(@RequestParam String user_id,@RequestParam String password) {
-
-        
-        return authservice.registerUser(user_id, password);
+        System.out.println(josn);
+        return authservice.registerUser(firstname,lastname,rollid,isactive,user_id, password,josn);
     }
 
     @CrossOrigin("*")
@@ -168,7 +171,16 @@ public List<Assetsmodel> getassets() {
 
 
     }
+    // @RequestMapping("/assignmentexport")
+    // public void assignmentexport(HttpServletResponse response) throws IOException {
+    //     // Example data list, replace with your actual data source
+      
+      
+    //     assignmentexport.exportToExcel(analtyc2.getassignment(), response);
 
+
+
+    // }
 //this Recording download service 
        @GetMapping("/download")
     public ResponseEntity<byte[]> downloadFile(@RequestParam String fileUrl,@RequestParam String filename) {
