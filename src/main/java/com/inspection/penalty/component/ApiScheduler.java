@@ -14,9 +14,9 @@ public class ApiScheduler {
         this.restTemplate = restTemplate;
     }
 
-    @Scheduled(cron = "0 0/45 * * * ?") // Cron expression for every 45 minutes
-    //@Scheduled(fixedRate = 5000)
-    @Scheduled(cron = "0 0/45 * * * ?") // Cron expression for every 45 minutes
+    //@Scheduled(cron = "0 0/45 * * * ?") // Cron expression for every 45 minutes
+    //
+    @Scheduled(fixedRate = 5000)
     public void callApiEvery45Minutes() {
         String url = "http://192.168.200.10/pushservice/tokengerator.php"; // Replace with your API URL
         try {
