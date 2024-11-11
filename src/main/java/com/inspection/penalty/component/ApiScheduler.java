@@ -26,4 +26,16 @@ public class ApiScheduler {
             System.err.println("Error calling the API: " + e.getMessage());
         }
     }
+
+
+    @Scheduled(fixedRate = 20000)
+    public void callApiEvery45Minutesd() {
+        String url = "http://192.168.200.10/pushservice/casepush.php"; // Replace with your API URL
+        try {
+            String response = restTemplate.getForObject(url, String.class);
+            System.out.println("API response: " + response);
+        } catch (Exception e) {
+            System.err.println("Error calling the API: " + e.getMessage());
+        }
+    }
 }
