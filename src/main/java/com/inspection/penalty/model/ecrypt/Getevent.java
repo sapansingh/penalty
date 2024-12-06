@@ -74,14 +74,13 @@ public class Getevent {
         return "{" +
             " eventid='" + getEventid() + "'" +
             ", vehicle_no='" + getVehicle_no() + "'" +
+            ", mobile_no='" + getMobile_no() + "'" +
             ", dispg='" + getDispg() + "'" +
             ", key='" + getKey() + "'" +
             ", client_id='" + getClient_id() + "'" +
             ", jwtToken='" + getJwtToken() + "'" +
             "}";
     }
-
- 
 
 
 }

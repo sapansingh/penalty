@@ -7,6 +7,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 import org.springframework.http.HttpHeaders;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -18,6 +20,7 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,6 +45,8 @@ import com.inspection.penalty.service.assetsservice;
 import com.inspection.penalty.service.paraservice;
 import com.inspection.penalty.service.userauthservice;
 import com.inspection.penalty.service.analytic.analtyc;
+import com.inspection.penalty.service.rajcopwservice.VehicleService;
+
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -69,6 +74,9 @@ public class home {
     private analtyc analtyc;
     @Autowired
     private Encrypesrb crypto;
+
+    @Autowired
+    private VehicleService vehicleservice;
    
 
 
@@ -92,155 +100,21 @@ public class home {
 
     String response;
     @GetMapping("/Tokengenerate")
-    public String getencrypt(@RequestParam String clientid,@RequestParam String secrete) {
+    public CompletableFuture<String> getencrypt(@RequestParam String clientid,@RequestParam String secrete) {
         
-        final String key="754A3c45wd658K09zt7E905443160621";
-         String iv=crypto.generateRandomIV();
-         System.out.println("IV : - " + iv);
-         String encodediv = Base64.encodeBase64String(iv.getBytes());
-         System.out.println("encodediv " + encodediv);
-    
-         String originalString = "{\"clientId\":\""+clientid+"\",\"clientSecret\":\""+secrete+"\"}";
-         System.out.println("Original String to encrypt - " + originalString);
-         String encryptedString =  crypto.encrypt(originalString, iv, key);
-         Encrypt en=new Encrypt();
-         String responseBody;
+      
         
-         System.out.println("dycrpt data");
-         String decryptedStringd = crypto.decrypt(encryptedString, iv,key);
-         System.out.println(decryptedStringd);
-
-              try (CloseableHttpClient client = HttpClients.createDefault()) {
-            // HttpPost post = new HttpPost("https://policetraining.rajasthan.gov.in/psa-auth/clientAppToken");
-            String tokenurl="https://police.rajasthan.gov.in/psa-auth/clientAppToken";
-            System.out.println(tokenurl);
-            HttpPost post = new HttpPost(tokenurl);
-            post.setHeader("Content-Type","application/json");
-            post.setHeader("ClientId","EMRI_USER");
-
-            // JSON data to send
-            String json = "{\"v1\":\""+encryptedString+"\",\"v2\":\""+encodediv+"\"}";
-            post.setEntity(new StringEntity(json));
-                System.out.println(json);
-            try (CloseableHttpResponse response = client.execute(post)) {
-                System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
-                 responseBody = EntityUtils.toString(response.getEntity());
-                System.out.println("Response Body: " + responseBody);
-
-                ObjectMapper objectMapper = new ObjectMapper();
-                try {
-                   // Convert JSON string to Person object
-                    en = objectMapper.readValue(responseBody, Encrypt.class);
-                   System.out.println("v1: " + en.getV1());
-                   System.out.println("v2: " + en.getV2()); 
-
-               } catch (Exception e) {
-                   e.printStackTrace();
-               }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Tokenrespo tr=new Tokenrespo();
-     
-        String v2 = en.getV2();
-        String v1 = en.getV1();
-        if(v2 != null && v1 != null){
-
-            String decodediv = new String(Base64.decodeBase64(en.getV2().getBytes()));
-            String decryptedString = crypto.decrypt(en.getV1(), decodediv,key);
-            
-                System.out.println(decryptedString);
-       ObjectMapper objectMapper = new ObjectMapper();
-                    try {
-                       // Convert JSON string to Person object
-                       tr = objectMapper.readValue(decryptedString, Tokenrespo.class);
-                       response=tr.toString();
-    
-                            if(tr.getJwtToken()!=""){
-                                crypto.gettoken(tr.getAccessTokenExpiryTime(), tr.getJwtToken(), tr.getMessage(), tr.getRefreshTokenExpiryTime() ,tr.getStatus(),tr.getRefreshToken());
-    
-                            }
-                       
-                   } catch (Exception e) {
-                       e.printStackTrace();
-                   }
-
-        }else{
-            response="data api failed try again";
-        }
- 
 
         
-        return response;
+        return vehicleservice.gettokken(clientid, secrete);
     }
     String respnsestring;
     @PostMapping("/updateVehicleRequest")
-    public String updateVehicleRequest(@RequestBody Getevent newgetevent) {
-         
-        //TODO: process POST request
-        final String key=newgetevent.getKey();
-          System.out.println(newgetevent.toString());
-        System.out.println(key);
-        String iv=crypto.generateRandomIV();
-        System.out.println("IV : - " + iv);
-        String encodediv = Base64.encodeBase64String(iv.getBytes());
-        System.out.println("encodediv " + encodediv);
-   
-            newgetevent.getEventid();
-        String originalString = "{\"agencyEventId\":\""+newgetevent.getEventid()+"\",\"vehicleNumber\":\""+newgetevent.getVehicle_no()+"\",\"driverNumber\":\""+newgetevent.getMobile_no()+"\",\"dispatchGroup\":\""+newgetevent.getDispg()+"\"}";
-       // String originalString = "{\"agencyEventId\":\"5kw9r\",\"vehicleNumber\":\""+newgetevent.getVehicle_no()+"\"}";
-
-        System.out.println("Original String to encrypt - " + originalString);
-        String encryptedString =  crypto.encrypt(originalString, iv, key);
-        Encrypt en=new Encrypt();
-        // String responseBody;
-     System.out.println(encryptedString);
-        System.out.println("dycrpt data");
-        String decryptedStringd = crypto.decrypt(encryptedString, iv,key);
-        System.out.println(decryptedStringd);
-
-        //String originalStringd = "{\"v1\":\""+encryptedString+"\",\"v2\":\""+encodediv+"\"}";
-
-            String responseBody;
-
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpPost post = new HttpPost("https://police.rajasthan.gov.in/psa-cctns-master/v1/womenSafety/updateVehicleRequest");
-            post.setHeader("Content-Type","application/json");
-            post.setHeader("ClientId","EMRI_USER");
-            post.setHeader("Authorization","Bearer "+newgetevent.getJwtToken()+"");
-            // JSON data to send
-            String json = "{\"v1\":\""+encryptedString+"\",\"v2\":\""+encodediv+"\"}";
-            post.setEntity(new StringEntity(json));
-                System.out.println(json);
-            try (CloseableHttpResponse response = client.execute(post)) {
-                System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
-                 responseBody = EntityUtils.toString(response.getEntity());
-                System.out.println("Response Body: " + responseBody);
-
-                ObjectMapper objectMapper = new ObjectMapper();
-                try {
-                   // Convert JSON string to Person object
-                    en = objectMapper.readValue(responseBody, Encrypt.class);
-                   System.out.println("v1: " + en.getV1());
-                   System.out.println("v2: " + en.getV2());
-
-                   String decodediv = new String(Base64.decodeBase64(en.getV2().getBytes()));
-                   String decryptedString = crypto.decrypt(en.getV1(), decodediv,key);
-                   respnsestring=decryptedString;
-
-                   System.out.println(decryptedString);
-
-               } catch (Exception e) {
-                   e.printStackTrace();
-               }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public CompletableFuture<String> updateVehicleRequest(@RequestBody Getevent newgetevent) {
+        
+       return vehicleservice.updateVehicleRequestAsync(newgetevent);
 
 
-        return respnsestring;
     }
 
 
