@@ -31,6 +31,7 @@ import com.inspection.penalty.model.admin.Userlistmodel;
 import com.inspection.penalty.model.analytics.assignment;
 import com.inspection.penalty.model.assets.Assetsmodel;
 import com.inspection.penalty.model.ecrypt.Encrypt;
+import com.inspection.penalty.model.ecrypt.GetarriveTime;
 import com.inspection.penalty.model.ecrypt.Getclose;
 import com.inspection.penalty.model.ecrypt.Getevent;
 import com.inspection.penalty.model.ecrypt.Tokenrespo;
@@ -187,6 +188,85 @@ public class home {
     }
     
     
+    @PostMapping("/casestatus")
+    public String Casestatus(@RequestBody  GetarriveTime newgetevent) {
+        //TODO: process POST request
+
+           //TODO: process POST request
+           final String key=newgetevent.getKey();
+
+           System.out.println(key);
+           String iv=crypto.generateRandomIV();
+           System.out.println("IV : - " + iv);
+           String encodediv = Base64.encodeBase64String(iv.getBytes());
+           System.out.println("encodediv " + encodediv);
+      
+   
+         //  String originalString = "{\"agencyEventId\":\""+newgetevent.getAgencyEventId()+"\",\"dispatchGroup\":\""+newgetevent.getDispatchGroup()+"\"}";
+          // String originalString = "{\"agencyEventId\":\"5kw9r\",\"vehicleNumber\":\""+newgetevent.getVehicle_no()+"\"}";
+          String originalString = "{\"agencyEventId\":\"" + newgetevent.getAgencyEventId() + "\","
+          + "\"dispatchGroup\":\"" + newgetevent.getDispatchGroup() + "\","
+          + "\"unitId\":\"" + (newgetevent.getUnitId() != null ? newgetevent.getUnitId() : "") + "\","
+          + "\"agencyId\":\"" + (newgetevent.getAgencyId() != null ? newgetevent.getAgencyId() : "") + "\","
+          + "\"dispatchtime\":\"" + (newgetevent.getDispatchTime() != null ? newgetevent.getDispatchTime() : "") + "\","
+          + "\"enroutetime\":\"" + (newgetevent.getEnrouteTime() != null ? newgetevent.getEnrouteTime() : "") + "\","
+          + "\"arrivetime\":\"" + (newgetevent.getArrivalTime() != null ? newgetevent.getArrivalTime() : "") + "\","
+          + "\"closedtime\":\"" + (newgetevent.getClosedTime() != null ? newgetevent.getClosedTime() : "") + "\","
+          + "\"remark\":\"" + newgetevent.getRemark() + "\"}";
+
+           System.out.println("Original String to encrypt - " + originalString);
+           String encryptedString =  crypto.encrypt(originalString, iv, key);
+           Encrypt en=new Encrypt();
+           // String responseBody;
+        System.out.println(encryptedString);
+           System.out.println("dycrpt data");
+           String decryptedStringd = crypto.decrypt(encryptedString, iv,key);
+           System.out.println(decryptedStringd);
+   
+           //String originalStringd = "{\"v1\":\""+encryptedString+"\",\"v2\":\""+encodediv+"\"}";
+   
+               String responseBody;
+   
+           try (CloseableHttpClient client = HttpClients.createDefault()) {
+               HttpPost post = new HttpPost("https://policetraining.rajasthan.gov.in/psa-cctns-master/v1/womenSafety/updateVehicleTimingsDetails");
+               post.setHeader("Content-Type","application/json");
+               post.setHeader("ClientId","EMRI_USER");
+               post.setHeader("Authorization","Bearer "+newgetevent.getJwtToken()+"");
+               // JSON data to send
+               String json = "{\"v1\":\""+encryptedString+"\",\"v2\":\""+encodediv+"\"}";
+               post.setEntity(new StringEntity(json));
+                   System.out.println(json);
+               try (CloseableHttpResponse response = client.execute(post)) {
+                   System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
+                    responseBody = EntityUtils.toString(response.getEntity());
+                   System.out.println("Response Body: " + responseBody);
+   
+                   ObjectMapper objectMapper = new ObjectMapper();
+                   try {
+                      // Convert JSON string to Person object
+                       en = objectMapper.readValue(responseBody, Encrypt.class);
+                      System.out.println("v1: " + en.getV1());
+                      System.out.println("v2: " + en.getV2());
+   
+                      String decodediv = new String(Base64.decodeBase64(en.getV2().getBytes()));
+                      String decryptedString = crypto.decrypt(en.getV1(), decodediv,key);
+   
+                      System.out.println(decryptedString);
+                      respnsestring=decryptedString;
+                  } catch (Exception e) {
+                      e.printStackTrace();
+                  }
+               }
+           } catch (Exception e) {
+               e.printStackTrace();
+           }
+   
+        
+        return respnsestring;
+    }
+
+
+
     @GetMapping("/getpermision")
     public List<Permissionmodel> permision() {
         return authservice.getpermisioin();
