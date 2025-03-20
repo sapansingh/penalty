@@ -228,7 +228,7 @@ public class home {
                String responseBody;
    
            try (CloseableHttpClient client = HttpClients.createDefault()) {
-               HttpPost post = new HttpPost("https://policetraining.rajasthan.gov.in/psa-cctns-master/v1/womenSafety/updateVehicleTimingsDetails");
+               HttpPost post = new HttpPost("https://police.rajasthan.gov.in/psa-cctns-master/v1/womenSafety/updateVehicleTimingsDetails");
                post.setHeader("Content-Type","application/json");
                post.setHeader("ClientId","EMRI_USER");
                post.setHeader("Authorization","Bearer "+newgetevent.getJwtToken()+"");

@@ -1,6 +1,5 @@
 package com.inspection.penalty.model.ecrypt;
 
-import java.time.LocalDateTime;
 
 public class GetarriveTime {
 
@@ -8,40 +7,22 @@ public class GetarriveTime {
     private String dispatchGroup;
     private String unitId;
     private String agencyId;
-    private LocalDateTime dispatchTime;
-    private LocalDateTime enrouteTime;
-    private LocalDateTime arrivalTime;
-    private LocalDateTime closedTime;
+
+    private String dispatchTime;
+
+
+    private String enrouteTime;
+
+
+    private String arrivalTime;
+
+
+    private String closedTime;
+
     private String remark;
     private String key;
     private String client_id;
     private String jwtToken;
-
-
-    public String getKey() {
-        return this.key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getClient_id() {
-        return this.client_id;
-    }
-
-    public void setClient_id(String client_id) {
-        this.client_id = client_id;
-    }
-
-    public String getJwtToken() {
-        return this.jwtToken;
-    }
-
-    public void setJwtToken(String jwtToken) {
-        this.jwtToken = jwtToken;
-    }
-
 
     public String getAgencyEventId() {
         return this.agencyEventId;
@@ -75,35 +56,35 @@ public class GetarriveTime {
         this.agencyId = agencyId;
     }
 
-    public LocalDateTime getDispatchTime() {
+    public String getDispatchTime() {
         return this.dispatchTime;
     }
 
-    public void setDispatchTime(LocalDateTime dispatchTime) {
+    public void setDispatchTime(String dispatchTime) {
         this.dispatchTime = dispatchTime;
     }
 
-    public LocalDateTime getEnrouteTime() {
+    public String getEnrouteTime() {
         return this.enrouteTime;
     }
 
-    public void setEnrouteTime(LocalDateTime enrouteTime) {
+    public void setEnrouteTime(String enrouteTime) {
         this.enrouteTime = enrouteTime;
     }
 
-    public LocalDateTime getArrivalTime() {
+    public String getArrivalTime() {
         return this.arrivalTime;
     }
 
-    public void setArrivalTime(LocalDateTime arrivalTime) {
+    public void setArrivalTime(String arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 
-    public LocalDateTime getClosedTime() {
+    public String getClosedTime() {
         return this.closedTime;
     }
 
-    public void setClosedTime(LocalDateTime closedTime) {
+    public void setClosedTime(String closedTime) {
         this.closedTime = closedTime;
     }
 
@@ -115,9 +96,34 @@ public class GetarriveTime {
         this.remark = remark;
     }
 
+    public String getKey() {
+        return this.key;
+    }
 
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-    public GetarriveTime(String agencyEventId, String dispatchGroup, String unitId, String agencyId, LocalDateTime dispatchTime, LocalDateTime enrouteTime, LocalDateTime arrivalTime, LocalDateTime closedTime, String remark, String key, String client_id, String jwtToken) {
+    public String getClient_id() {
+        return this.client_id;
+    }
+
+    public void setClient_id(String client_id) {
+        this.client_id = client_id;
+    }
+
+    public String getJwtToken() {
+        return this.jwtToken;
+    }
+
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
+    }
+
+    public GetarriveTime() {
+    }
+
+    public GetarriveTime(String agencyEventId, String dispatchGroup, String unitId, String agencyId, String dispatchTime, String enrouteTime, String arrivalTime, String closedTime, String remark, String key, String client_id, String jwtToken) {
         this.agencyEventId = agencyEventId;
         this.dispatchGroup = dispatchGroup;
         this.unitId = unitId;
@@ -131,7 +137,7 @@ public class GetarriveTime {
         this.client_id = client_id;
         this.jwtToken = jwtToken;
     }
-
+    
 
     @Override
     public String toString() {
@@ -150,7 +156,5 @@ public class GetarriveTime {
             ", jwtToken='" + getJwtToken() + "'" +
             "}";
     }
-
-    
     
 }
