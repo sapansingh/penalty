@@ -8,7 +8,6 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-
 import org.springframework.http.HttpHeaders;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -234,6 +233,7 @@ public class home {
                post.setHeader("Authorization","Bearer "+newgetevent.getJwtToken()+"");
                // JSON data to send
                String json = "{\"v1\":\""+encryptedString+"\",\"v2\":\""+encodediv+"\"}";
+             //  String ddt="{ \"v1\":\"VUrT4M9DPjzlTYqja4d2T3xGvPhBBJUng/h4IK2xQIBrQMlUOQYCQeVn+zNy5LhuSPiNNaEB2Z6gqsJBdeGOve9MmxnkeudMmwuhJmtxO3FBk8B35q3gJJvMwaukqLvW0gKAkN1ZgGsJIghMW1ar7e+bBhdawHPdUQQLKZyP1If0PNKJ50KgQd4+Md3TE+aZ543NtcukIDlD5ePli6VRjM7st3ye1XjGwQQsveWIe3tTpo1znpi97NXim/J10V5u1sRsLy35Jx+0Rzji/0IZCg==\", \"v2\":\"ZjA2YmQzMmRmNGY5Y2ZjNQ==\" }";
                post.setEntity(new StringEntity(json));
                    System.out.println(json);
                try (CloseableHttpResponse response = client.execute(post)) {
@@ -265,22 +265,16 @@ public class home {
         return respnsestring;
     }
 
-
-
     @GetMapping("/getpermision")
     public List<Permissionmodel> permision() {
         return authservice.getpermisioin();
     }
-    
 
     @PostMapping("/addassets")
 public int Addassets(@RequestBody Assetsmodel formdata) {
        int status= addservice.addassetsnew(formdata);
-    
-   
     return status;
 }
-
 @GetMapping("/assetsdata")
 public List<Assetsmodel> getassets() {
     return addservice.getassets();
@@ -327,7 +321,7 @@ public List<Assetsmodel> getassets() {
     
     @RequestMapping("/vehicle")
     @ResponseBody
-    public List<vehicles> vehiclelist() {
+    public List<vehicles> vehiclelist() {   
         return para.vehiclelist();
     }
     @RequestMapping("/penaltymeter")
@@ -417,7 +411,5 @@ public List<Assetsmodel> getassets() {
         }
     }
     
-
-
 
 }
